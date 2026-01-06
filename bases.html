@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Menu Extractor - Review Bases</title>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --accent: #f24e4e;
+      --accent-hover: #d13d3d;
+      --bg-light: #f4f7fa;
+      --card-bg: #ffffff;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --field-bg: #f8fafc;
+      --pink-soft: #fef2f2;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 1000px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .header-section { text-align: center; margin-bottom: 30px; }
+    h2 { margin: 0 0 10px; font-size: 24px; }
+    p { margin: 0; color: var(--text-muted); font-size: 14px; }
+
+    .meta {
+      display: flex;
+      gap: 10px;
+      margin: 25px 0;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 6px 14px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .badge b { color: var(--accent); }
+
+    .category-block {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 25px;
+      background: #fff;
+    }
+
+    .category-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .category-title input {
+      border: none;
+      background: transparent;
+      font-weight: 800;
+      font-size: 13px;
+      text-transform: uppercase;
+      color: var(--accent);
+      width: 100%;
+      outline: none;
+      min-width: 0;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 18px 0 10px;
+    }
+
+    input[type="radio"] { accent-color: var(--accent); }
+
+    .row {
+      display: grid;
+      grid-template-columns: 2.5fr 1fr 1fr 0.75fr 92px;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 10px;
+      background: var(--field-bg);
+      transition: 0.2s;
+      box-sizing: border-box;
+    }
+
+    .row.editing {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    input, select {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: 0.2s;
+      height: 42px;
+    }
+
+    input:hover, select:hover { border-color: var(--border); }
+
+    .row.editing input,
+    .row.editing select {
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .checkbox-wrap {
+      font-size: 11px;
+      gap: 6px;
+    }
+
+    .checkbox-wrap input[type="radio"]{
+      width: 14px;
+      height: 14px;
+      margin: 0;
+      cursor: pointer;
+      accent-color: var(--accent);
+    }
+
+    .row.editing .checkbox-wrap { color: #fff; }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .action-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      background: var(--pink-soft);
+      color: var(--accent);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.2s;
+    }
+
+    .action-btn:hover { background: var(--accent); color: #fff; }
+
+    .btn-add {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: 2px dashed var(--accent);
+      background: var(--pink-soft);
+      color: var(--accent);
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.2s;
+    }
+
+    .btn-add:hover { background: var(--accent); color: #fff; }
+
+    .footer-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 40px;
+      border-top: 1px solid var(--border);
+      padding-top: 25px;
+    }
+
+    button.main {
+      flex: 1;
+      padding: 16px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    .primary { background: var(--accent); color: white; }
+    .primary:hover { background: var(--accent-hover); }
+    .pink-ghost { background: var(--pink-soft); color: var(--accent); border: 1px solid var(--accent); }
+
+    .status-msg { text-align: center; margin-top: 15px; font-size: 14px; color: var(--accent); font-weight: 600; }
+    .error { margin-top: 20px; color: #b91c1c; background: var(--pink-soft); padding: 12px; border-radius: 12px; font-size: 13px; display: none; }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="header-section">
+      <h2>Review Category Bases</h2>
+      <p>Edit base options & subcategory bases before extracting addons.</p>
+    </div>
+
+    <div class="meta" id="meta"></div>
+    <div id="bases-container"></div>
+
+    <div class="status-msg" id="status"></div>
+    <div class="error" id="error"></div>
+
+    <div class="footer-actions">
+      <button class="main pink-ghost" id="prevBtn">Back</button>
+      <button class="main primary" id="nextBtn">Next</button>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * ============================================
+     * Config
+     * ============================================
+     */
+    const API_BASE = "menuextractionv1-production.up.railway.app";
+    const PER_PAGE = 2;
+    const CURRENCIES = ["USD", "AUD", "EUR", "GBP"];
+
+    /**
+     * ============================================
+     * DOM
+     * ============================================
+     */
+    const dom = {
+      container: document.getElementById("bases-container"),
+      metaEl: document.getElementById("meta"),
+      statusEl: document.getElementById("status"),
+      errorEl: document.getElementById("error"),
+      prevBtn: document.getElementById("prevBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+    };
+
+    /**
+     * ============================================
+     * Local Storage
+     * ============================================
+     */
+    const storage = {
+      jobId: localStorage.getItem("job_id"),
+      phase2Raw: localStorage.getItem("phase2_result"),
+      phase3Raw: localStorage.getItem("phase3_result"),
+    };
+
+    if (!storage.jobId || !storage.phase2Raw || !storage.phase3Raw) {
+      window.location.href = "./index.html";
+    }
+
+    /**
+     * ============================================
+     * State
+     * ============================================
+     */
+    const phase2Data = JSON.parse(storage.phase2Raw);
+    let phase3Data = JSON.parse(storage.phase3Raw);
+
+    // Flatten categories for paging through them
+    const allCats = flattenCategories(phase3Data);
+
+    // Current page index (persisted)
+    let pageIndex = parseInt(localStorage.getItem("bases_page")) || 0;
+
+    /**
+     * ============================================
+     * Helpers
+     * ============================================
+     */
+    function savePhase3() {
+      localStorage.setItem("phase3_result", JSON.stringify(phase3Data));
+    }
+
+    function setPageIndex(nextIndex) {
+      pageIndex = nextIndex;
+      localStorage.setItem("bases_page", pageIndex);
+    }
+
+    function resetFeedback() {
+      dom.errorEl.style.display = "none";
+      dom.errorEl.textContent = "";
+      dom.statusEl.textContent = "";
+    }
+
+    function setError(message) {
+      dom.errorEl.textContent = message;
+      dom.errorEl.style.display = "block";
+    }
+
+    function setStatus(message) {
+      dom.statusEl.textContent = message;
+    }
+
+    function setNextLoading(isLoading) {
+      dom.nextBtn.disabled = isLoading;
+      dom.nextBtn.textContent = isLoading
+        ? "Processing..."
+        : "Extract Addons (Phase 4)";
+    }
+
+    function currencyOptions(selectedCurrency) {
+      return CURRENCIES.map((c) => {
+        return `<option value="${c}" ${c === selectedCurrency ? "selected" : ""}>${c}</option>`;
+      }).join("");
+    }
+
+    function flattenCategories(phase3) {
+      const result = [];
+
+      phase3.pages.forEach((page, pIdx) => {
+        page.categories.forEach((cat, cIdx) => {
+          result.push({
+            page_num: page.page_number,
+            pIdx,
+            cIdx,
+            catRef: cat,
+          });
+        });
+      });
+
+      return result;
+    }
+
+    function createEl(tag, className) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      return el;
+    }
+
+    function getPagingSlice() {
+      const start = pageIndex * PER_PAGE;
+      const end = start + PER_PAGE;
+      return { start, end, slice: allCats.slice(start, end) };
+    }
+
+    /**
+     * ============================================
+     * Rendering
+     * ============================================
+     */
+    function renderMeta({ start }) {
+      dom.metaEl.innerHTML = `
+        <span class="badge">Restaurant: <b>${phase3Data.restaurant_name}</b></span>
+        <span class="badge">
+          Categories:
+          <b>${start + 1}-${Math.min(start + PER_PAGE, allCats.length)} / ${allCats.length}</b>
+        </span>
+      `;
+    }
+
+    function renderCategoryBlock({ page_num, pIdx, cIdx, catRef }) {
+      const block = createEl("div", "category-block");
+
+      block.innerHTML = `
+        <div class="category-title">
+          <input
+            value="${catRef.name_raw || ""}"
+            oninput="actions.updateCategoryName(${pIdx}, ${cIdx}, this.value)"
+          />
+          <small>Page ${page_num}</small>
+        </div>
+
+        <div class="section-label">Base Options</div>
+        <div id="base-${pIdx}-${cIdx}"></div>
+        <button class="btn-add" onclick="actions.addBaseOption(${pIdx}, ${cIdx})">
+          + Add Base Option
+        </button>
+
+        <div class="section-label">Subcategories Base</div>
+        <div id="sub-${pIdx}-${cIdx}"></div>
+        <button class="btn-add" onclick="actions.addSubBase(${pIdx}, ${cIdx})">
+          + Add Subcategory Base
+        </button>
+      `;
+
+      // Render base options
+      const baseHolder = block.querySelector(`#base-${pIdx}-${cIdx}`);
+      (catRef.base_options || []).forEach((opt, oIdx) => {
+        baseHolder.appendChild(renderRow(pIdx, cIdx, "base_options", oIdx, opt));
+      });
+
+      // Render subcategory base options
+      const subHolder = block.querySelector(`#sub-${pIdx}-${cIdx}`);
+      (catRef.subcategories_base || []).forEach((opt, oIdx) => {
+        subHolder.appendChild(renderRow(pIdx, cIdx, "subcategories_base", oIdx, opt));
+      });
+
+      return block;
+    }
+
+    function renderRow(pIdx, cIdx, type, oIdx, opt) {
+      const row = createEl("div", "row");
+
+      const amount = opt.price?.amount ?? "";
+      const currency = opt.price?.currency ?? "USD";
+      const radioGroup = `${pIdx}-${cIdx}-${type}`;
+
+      row.innerHTML = `
+        <input
+          value="${opt.name_raw || ""}"
+          placeholder="Name"
+          onfocus="this.closest('.row').classList.add('editing')"
+          onblur="this.closest('.row').classList.remove('editing')"
+          oninput="actions.updateOption(${pIdx}, ${cIdx}, '${type}', ${oIdx}, 'name_raw', this.value)"
+        />
+
+        <input
+          value="${amount}"
+          placeholder="Price"
+          onfocus="this.closest('.row').classList.add('editing')"
+          onblur="this.closest('.row').classList.remove('editing')"
+          oninput="actions.updatePrice(${pIdx}, ${cIdx}, '${type}', ${oIdx}, this.value)"
+        />
+
+        <select onchange="actions.updateCurrency(${pIdx}, ${cIdx}, '${type}', ${oIdx}, this.value)">
+          ${currencyOptions(currency)}
+        </select>
+
+        <div class="checkbox-wrap">
+          <input
+            type="radio"
+            name="default-${radioGroup}"
+            ${opt.default ? "checked" : ""}
+            onchange="actions.updateDefault(${pIdx}, ${cIdx}, '${type}', ${oIdx})"
+          />
+          Default
+        </div>
+
+        <div class="actions">
+          <button class="action-btn" onclick="this.closest('.row').querySelector('input').focus()">
+            <i data-lucide="pen-line"></i>
+          </button>
+
+          <button class="action-btn" onclick="actions.removeOption(${pIdx}, ${cIdx}, '${type}', ${oIdx})">
+            <i data-lucide="trash-2"></i>
+          </button>
+        </div>
+      `;
+
+      return row;
+    }
+
+    function renderNavigationState() {
+      dom.prevBtn.style.visibility = pageIndex === 0 ? "hidden" : "visible";
+
+      const isLastPage = (pageIndex + 1) * PER_PAGE >= allCats.length;
+      dom.nextBtn.textContent = isLastPage ? "Extract Addons (Phase 4)" : "Next";
+      dom.nextBtn.onclick = isLastPage ? extractAddons : nextPage;
+    }
+
+    function render() {
+      dom.container.innerHTML = "";
+
+      const { start, slice } = getPagingSlice();
+      renderMeta({ start });
+
+      slice.forEach((cat) => {
+        dom.container.appendChild(renderCategoryBlock(cat));
+      });
+
+      renderNavigationState();
+      lucide.createIcons();
+    }
+
+    /**
+     * ============================================
+     * Actions (exposed globally for inline handlers)
+     * ============================================
+     */
+    const actions = {
+      updateCategoryName(pIdx, cIdx, value) {
+        phase3Data.pages[pIdx].categories[cIdx].name_raw = value;
+        savePhase3();
+      },
+
+      updateOption(pIdx, cIdx, type, oIdx, field, value) {
+        phase3Data.pages[pIdx].categories[cIdx][type][oIdx][field] = value;
+        savePhase3();
+      },
+
+      updatePrice(pIdx, cIdx, type, oIdx, value) {
+        const clean = value.replace(/[^0-9.]/g, "");
+        const num = parseFloat(clean) || 0;
+
+        const opt = phase3Data.pages[pIdx].categories[cIdx][type][oIdx];
+        if (!opt.price) opt.price = { amount: 0, currency: "USD" };
+
+        opt.price.amount = num;
+        savePhase3();
+      },
+
+      updateCurrency(pIdx, cIdx, type, oIdx, value) {
+        const opt = phase3Data.pages[pIdx].categories[cIdx][type][oIdx];
+        if (!opt.price) opt.price = { amount: 0, currency: value };
+
+        opt.price.currency = value;
+        savePhase3();
+      },
+
+      updateDefault(pIdx, cIdx, type, oIdx) {
+        const list = phase3Data.pages[pIdx].categories[cIdx][type];
+        list.forEach((x) => (x.default = false));
+
+        list[oIdx].default = true;
+        savePhase3();
+        render();
+      },
+
+      removeOption(pIdx, cIdx, type, oIdx) {
+        phase3Data.pages[pIdx].categories[cIdx][type].splice(oIdx, 1);
+        savePhase3();
+        render();
+      },
+
+      addBaseOption(pIdx, cIdx) {
+        const cat = phase3Data.pages[pIdx].categories[cIdx];
+        if (!cat.base_options) cat.base_options = [];
+
+        cat.base_options.push({
+          name_raw: "New Base Option",
+          price: { amount: 0, currency: "USD" },
+          default: false,
+          price_by_variation: null,
+        });
+
+        savePhase3();
+        render();
+      },
+
+      addSubBase(pIdx, cIdx) {
+        const cat = phase3Data.pages[pIdx].categories[cIdx];
+        if (!cat.subcategories_base) cat.subcategories_base = [];
+
+        cat.subcategories_base.push({
+          name_raw: "New Sub Base",
+          price: { amount: 0, currency: "USD" },
+          default: false,
+          price_by_variation: null,
+        });
+
+        savePhase3();
+        render();
+      },
+    };
+
+    window.actions = actions;
+
+    /**
+     * ============================================
+     * Navigation
+     * ============================================
+     */
+    function nextPage() {
+      setPageIndex(pageIndex + 1);
+      render();
+      window.scrollTo(0, 0);
+    }
+
+    dom.prevBtn.onclick = () => {
+      if (pageIndex > 0) {
+        setPageIndex(pageIndex - 1);
+        render();
+        window.scrollTo(0, 0);
+      } else {
+        window.location.href = "items.html";
+      }
+    };
+
+    /**
+     * ============================================
+     * API / Phase 4
+     * ============================================
+     */
+    async function extractAddons() {
+      resetFeedback();
+
+      setStatus("Extracting addons (Phase 4)... Please wait.");
+      dom.nextBtn.disabled = true;
+      dom.nextBtn.textContent = "Processing...";
+
+      try {
+        const payload = {
+          categories: phase2Data,
+          categories_bases: phase3Data,
+        };
+
+        const response = await fetch(`${API_BASE}/api/phase4/extract-addons/${storage.jobId}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) throw new Error("Phase 4 failed.");
+
+        const data = await response.json();
+
+        localStorage.setItem("phase4_result", JSON.stringify(data.phase4_result));
+        localStorage.removeItem("bases_page");
+
+        window.location.href = "final.html";
+      } catch (err) {
+        setStatus("");
+        setError("Addon extraction failed: " + err.message);
+
+        dom.nextBtn.disabled = false;
+        dom.nextBtn.textContent = "Extract Addons (Phase 4)";
+      }
+    }
+
+    /**
+     * ============================================
+     * Init
+     * ============================================
+     */
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Menu Extractor - Validate Categories</title>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --accent: #f24e4e; 
+      --accent-hover: #d13d3d;
+      --bg-light: #f4f7fa;
+      --card-bg: #ffffff;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background-color: var(--bg-light); 
+      color: var(--text-dark); 
+      padding: 40px 20px; 
+      display: flex; 
+      justify-content: center; 
+    }
+
+    .card { 
+      width: 100%;
+      max-width: 800px; 
+      background: var(--card-bg); 
+      border: 1px solid var(--border); 
+      border-radius: 24px; 
+      padding: 40px; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .header-section { text-align: center; margin-bottom: 30px; }
+    .logo { width: 50px; height: 50px; margin-bottom: 10px; }
+
+    h2 { margin: 0 0 10px; font-size: 24px; }
+    p { margin: 0 0 20px; color: var(--text-muted); font-size: 14px; }
+
+    .meta { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
+    .badge { 
+      padding: 6px 14px; 
+      background: #fff;
+      border: 1px solid var(--border); 
+      border-radius: 999px; 
+      font-size: 12px; 
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .badge b { color: var(--accent); }
+
+    .page-section { margin-top: 30px; }
+    .page-title { 
+      font-size: 14px; 
+      text-transform: uppercase; 
+      letter-spacing: 0.05em; 
+      color: var(--text-muted); 
+      margin-bottom: 15px;
+      border-bottom: 2px solid var(--bg-light);
+      padding-bottom: 5px;
+    }
+
+    .cat-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .category-row { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; 
+      padding: 12px 16px; 
+      background: #fff; 
+      border: 2px solid var(--border); 
+      border-radius: 14px; 
+      transition: all 0.3s ease;
+    }
+
+    .category-row:focus-within {
+      background-color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .category-input { 
+      flex: 1; 
+      border: none; 
+      background: transparent; 
+      font-size: 15px; 
+      font-weight: 600; 
+      color: var(--accent);
+      outline: none;
+      transition: color 0.3s ease;
+    }
+
+    .category-row:focus-within .category-input {
+      color: #ffffff;
+    }
+
+    .action-btn { 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      width: 36px; 
+      height: 36px; 
+      border-radius: 10px; 
+      border: none; 
+      cursor: pointer; 
+      transition: all 0.2s ease;
+      background: #fef2f2;
+      color: var(--accent);
+    }
+
+    .category-row:focus-within .action-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+
+    .action-btn:hover { background: var(--accent); color: white; }
+
+    .add-btn-container { margin-top: 20px; display: flex; justify-content: center; }
+    
+    .btn-add {
+      background: #fef2f2;
+      border: 2px dashed var(--accent);
+      color: var(--accent);
+      padding: 12px 24px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-weight: 600;
+      width: 100%;
+      transition: all 0.2s ease;
+    }
+    .btn-add:hover { background: var(--accent); color: white; }
+
+    .footer-actions { 
+      display: flex; 
+      gap: 15px; 
+      margin-top: 40px; 
+      padding-top: 25px; 
+      border-top: 1px solid var(--border); 
+    }
+
+    button.main { 
+      flex: 1;
+      padding: 14px; 
+      border-radius: 12px; 
+      border: none; 
+      cursor: pointer; 
+      font-weight: 700; 
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .primary { background: var(--accent); color: white; }
+    .primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .primary:disabled { background: #cbd5e1; cursor: not-allowed; }
+    
+    .pink-ghost { background: #fef2f2; color: var(--accent); border: 1px solid var(--accent); }
+    .pink-ghost:hover { background: var(--accent); color: white; }
+
+    .status-msg { text-align: center; margin-top: 15px; font-size: 14px; color: var(--accent); font-weight: 600; }
+    .error { color:#b91c1c; background:#fef2f2; padding:12px; border-radius:12px; margin-top:20px; font-size:13px; }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="header-section">
+      <img src="logo.png" alt="Logo" class="logo">
+      <h2>Validate Categories</h2>
+      <p>Review the extracted categories. Use the icons to edit or remove them.</p>
+    </div>
+
+    <div class="meta" id="meta"></div>
+    <div id="content"></div>
+
+    <div class="status-msg" id="status"></div>
+
+    <div class="footer-actions">
+      <button class="main pink-ghost" id="backBtn">Back</button>
+      <button class="main primary" id="extractBtn">Extract Items</button>
+    </div>
+
+    <div class="error" id="error" style="display:none;"></div>
+  </div>
+
+  <script>
+    /**
+     * ============================================
+     * Config
+     * ============================================
+     */
+    const API_BASE = "menuextractionv1-production.up.railway.app";
+
+    /**
+     * ============================================
+     * DOM
+     * ============================================
+     */
+    const dom = {
+      metaEl: document.getElementById("meta"),
+      contentEl: document.getElementById("content"),
+      errorEl: document.getElementById("error"),
+      statusEl: document.getElementById("status"),
+      extractBtn: document.getElementById("extractBtn"),
+      backBtn: document.getElementById("backBtn"),
+    };
+
+    /**
+     * ============================================
+     * Local Storage (Source of truth for this page)
+     * ============================================
+     */
+    const storage = {
+      jobId: localStorage.getItem("job_id"),
+      restaurantName: localStorage.getItem("restaurant_name"),
+      menuType: localStorage.getItem("menu_type"),
+      phase1Raw: localStorage.getItem("phase1_result"),
+    };
+
+    /**
+     * ============================================
+     * Guards / Redirect if required state is missing
+     * ============================================
+     */
+    const isMissingRequiredState =
+      !storage.restaurantName || !storage.phase1Raw || !storage.jobId;
+
+    if (isMissingRequiredState) {
+      window.location.href = "./index.html";
+    }
+
+    /**
+     * ============================================
+     * State
+     * ============================================
+     */
+    let phase1 = JSON.parse(storage.phase1Raw);
+
+    /**
+     * ============================================
+     * UI Helpers
+     * ============================================
+     */
+    function resetFeedback() {
+      dom.errorEl.style.display = "none";
+      dom.errorEl.textContent = "";
+      dom.statusEl.textContent = "";
+    }
+
+    function setError(message) {
+      dom.errorEl.textContent = message;
+      dom.errorEl.style.display = "block";
+    }
+
+    function setStatus(message) {
+      dom.statusEl.textContent = message;
+    }
+
+    function setExtractLoading(isLoading) {
+      dom.extractBtn.disabled = isLoading;
+      dom.extractBtn.textContent = isLoading ? "Processing..." : "Extract Items";
+    }
+
+    /**
+     * ============================================
+     * Element Helpers
+     * ============================================
+     */
+    function createEl(tag, className) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      return el;
+    }
+
+    /**
+     * ============================================
+     * Rendering
+     * ============================================
+     */
+    function renderMeta() {
+      dom.metaEl.innerHTML = `
+        <span class="badge">Restaurant: <b>${storage.restaurantName}</b></span>
+        <span class="badge">Type: <b>${storage.menuType || "-"}</b></span>
+      `;
+    }
+
+    function renderCategoryRow({ pageIndex, categoryIndex, category }) {
+      const row = createEl("div", "category-row");
+
+      const input = createEl("input", "category-input");
+      input.value = category.name_raw || "";
+      input.placeholder = "Category Name...";
+      input.addEventListener("input", (e) => {
+        phase1.pages[pageIndex].data.categories[categoryIndex].name_raw =
+          e.target.value;
+      });
+
+      const editBtn = createEl("button", "action-btn");
+      editBtn.innerHTML = `<i data-lucide="pen-line" style="width:16px;"></i>`;
+      editBtn.onclick = () => input.focus();
+
+      const delBtn = createEl("button", "action-btn");
+      delBtn.innerHTML = `<i data-lucide="trash-2" style="width:16px;"></i>`;
+      delBtn.onclick = () => {
+        phase1.pages[pageIndex].data.categories.splice(categoryIndex, 1);
+        render();
+      };
+
+      row.appendChild(input);
+      row.appendChild(editBtn);
+      row.appendChild(delBtn);
+
+      return row;
+    }
+
+    function renderPageSection(page, pageIndex) {
+      const pageSection = createEl("div", "page-section");
+
+      const title = createEl("div", "page-title");
+      title.textContent = `Page ${page.page_number}`;
+      pageSection.appendChild(title);
+
+      const catList = createEl("div", "cat-list");
+
+      page.data.categories.forEach((category, categoryIndex) => {
+        const row = renderCategoryRow({
+          pageIndex,
+          categoryIndex,
+          category,
+        });
+        catList.appendChild(row);
+      });
+
+      pageSection.appendChild(catList);
+      pageSection.appendChild(renderAddCategoryButton(page, pageIndex));
+
+      return pageSection;
+    }
+
+    function renderAddCategoryButton(page, pageIndex) {
+      const addContainer = createEl("div", "add-btn-container");
+      const addBtn = createEl("button", "btn-add");
+
+      addBtn.innerHTML = `+ Add New Category to Page ${page.page_number}`;
+      addBtn.onclick = () => {
+        phase1.pages[pageIndex].data.categories.push({ name_raw: "New Category" });
+        render();
+      };
+
+      addContainer.appendChild(addBtn);
+      return addContainer;
+    }
+
+    function render() {
+      dom.contentEl.innerHTML = "";
+      renderMeta();
+
+      phase1.pages.forEach((page, pageIndex) => {
+        dom.contentEl.appendChild(renderPageSection(page, pageIndex));
+      });
+
+      // Re-create Lucide icons after DOM updates
+      lucide.createIcons();
+    }
+
+    /**
+     * ============================================
+     * API
+     * ============================================
+     */
+    async function extractItems({ jobId, payload }) {
+      const response = await fetch(`${API_BASE}/api/phase2/extract-items/${jobId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+
+      return response.json();
+    }
+
+    /**
+     * ============================================
+     * Events
+     * ============================================
+     */
+    dom.backBtn.onclick = () => {
+      window.location.href = "./index.html";
+    };
+
+    dom.extractBtn.onclick = async () => {
+      resetFeedback();
+
+      setStatus("Extracting menu items... This may take a minute.");
+      setExtractLoading(true);
+
+      const payload = {
+        restaurant_name: storage.restaurantName,
+        pages: phase1.pages,
+      };
+
+      try {
+        const data = await extractItems({
+          jobId: storage.jobId,
+          payload,
+        });
+
+        // Persist reviewed categories + extracted items
+        localStorage.setItem("phase1_reviewed", JSON.stringify(phase1));
+        localStorage.setItem("phase2_result", JSON.stringify(data.phase2_result));
+
+        // Continue to next screen
+        window.location.href = "items.html";
+      } catch (err) {
+        setStatus("");
+        setExtractLoading(false);
+        setError("Extraction failed: " + err.message);
+      }
+    };
+
+    /**
+     * ============================================
+     * Init
+     * ============================================
+     */
+    render();
+  </script>
+</body>
+</html>

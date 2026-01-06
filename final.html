@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Menu Extractor - Final Output</title>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --accent: #f24e4e;
+      --accent-hover: #d13d3d;
+      --bg-light: #f4f7fa;
+      --card-bg: #ffffff;
+      --text-dark: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --field-bg: #f8fafc;
+      --pink-soft: #fef2f2;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 1100px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    }
+
+    .header-section { text-align: center; margin-bottom: 30px; }
+    .logo { width: 55px; height: 55px; margin-bottom: 10px; }
+    h2 { margin: 0 0 10px; font-size: 26px; }
+    p { margin: 0; color: var(--text-muted); font-size: 14px; }
+
+    .meta {
+      display: flex;
+      gap: 10px;
+      margin: 25px 0;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 6px 14px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .badge b { color: var(--accent); }
+
+    .category-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .subcategory-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 25px 0 10px;
+      text-transform: uppercase;
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+
+    .item-card {
+      background: var(--field-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      gap: 10px;
+    }
+
+    .item-head b {
+      font-size: 15px;
+      color: var(--accent);
+    }
+
+    .item-body {
+      margin-top: 14px;
+      display: none;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    .checkbox-wrap input[type="radio"] {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .checkbox-wrap {
+      font-size: 11px;
+      font-weight: 700;
+      gap: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      color: var(--text-muted);
+    }
+
+    .addon-row {
+      display: grid;
+      grid-template-columns: 3.2fr 0.9fr 0.9fr 0.8fr 110px;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid var(--border);
+      transition: 0.2s;
+      box-sizing: border-box;
+    }
+
+    .addon-row.editing {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    input, select {
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      outline: none;
+      font-size: 13px;
+      width: 100%;
+      background: #fff;
+      box-sizing: border-box;
+      height: 38px;
+    }
+
+    .addon-row.editing input,
+    .addon-row.editing select {
+      background: rgba(255,255,255,0.16);
+      color: #fff;
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .addon-row.editing .checkbox-wrap {
+      color: white;
+    }
+
+    .action-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      background: var(--pink-soft);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.2s;
+    }
+
+    .action-btn:hover { background: var(--accent); color: white; }
+
+    .btn-add-small {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 2px dashed var(--accent);
+      background: #fef2f2;
+      color: var(--accent);
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-add-small:hover { background: var(--accent); color: white; }
+
+    .footer-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 40px;
+      border-top: 1px solid var(--border);
+      padding-top: 25px;
+    }
+
+    button.main {
+      flex: 1;
+      padding: 16px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    .primary { background: var(--accent); color: white; }
+    .primary:hover { background: var(--accent-hover); }
+    .pink-ghost { background: #fef2f2; color: var(--accent); border: 1px solid var(--accent); }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="header-section">
+      <img src="logo.png" class="logo" alt="Logo" onerror="this.style.display='none'">
+      <h2>Final Addons Review</h2>
+      <p>Review addons category by category and export JSON at the end.</p>
+    </div>
+
+    <div class="meta" id="meta"></div>
+    <div id="final-container"></div>
+
+    <div class="footer-actions">
+      <button class="main pink-ghost" id="prevBtn">Back</button>
+      <button class="main primary" id="nextBtn">Next Category</button>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * ============================================
+     * DOM
+     * ============================================
+     */
+    const dom = {
+      container: document.getElementById("final-container"),
+      metaEl: document.getElementById("meta"),
+      prevBtn: document.getElementById("prevBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+    };
+
+    /**
+     * ============================================
+     * Storage
+     * ============================================
+     */
+    const storage = {
+      phase4Raw: localStorage.getItem("phase4_result"),
+    };
+
+    if (!storage.phase4Raw) {
+      window.location.href = "./index.html";
+    }
+
+    /**
+     * ============================================
+     * State
+     * ============================================
+     */
+    const CURRENCIES = ["USD", "AUD", "EUR", "GBP"];
+    let phase4Data = JSON.parse(storage.phase4Raw);
+
+    const allCategories = flattenCategories(phase4Data);
+    let currentIdx = parseInt(localStorage.getItem("final_idx")) || 0;
+
+    /**
+     * ============================================
+     * Helpers
+     * ============================================
+     */
+    function save() {
+      localStorage.setItem("phase4_result", JSON.stringify(phase4Data));
+    }
+
+    function setIndex(nextIndex) {
+      currentIdx = nextIndex;
+      localStorage.setItem("final_idx", currentIdx);
+    }
+
+    function flattenCategories(phase4) {
+      const result = [];
+      phase4.pages.forEach((page) => {
+        page.categories.forEach((cat) => {
+          result.push({
+            page_num: page.page_number,
+            catRef: cat,
+          });
+        });
+      });
+      return result;
+    }
+
+    function createEl(tag, className) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      return el;
+    }
+
+    function currencyOptions(selected) {
+      return CURRENCIES.map((c) => {
+        return `<option value="${c}" ${c === selected ? "selected" : ""}>${c}</option>`;
+      }).join("");
+    }
+
+    /**
+     * Ensure:
+     * 1) every addon has a price (default amount 1)
+     * 2) exactly one addon is marked default
+     */
+    function ensureDefault(addons) {
+      if (!addons || addons.length === 0) return;
+
+      addons.forEach((a) => {
+        if (!a.price || typeof a.price.amount !== "number") {
+          a.price = { amount: 1, currency: "USD" };
+        }
+        if (!a.price.currency) a.price.currency = "USD";
+      });
+
+      const defaults = addons.filter((a) => a.default);
+
+      if (defaults.length === 0) {
+        addons[0].default = true;
+        return;
+      }
+
+      if (defaults.length > 1) {
+        addons.forEach((a) => (a.default = false));
+        addons[0].default = true;
+      }
+    }
+
+    /**
+     * ============================================
+     * Rendering
+     * ============================================
+     */
+    function renderMeta() {
+      dom.metaEl.innerHTML = `
+        <span class="badge">Restaurant: <b>${phase4Data.restaurant_name}</b></span>
+        <span class="badge">Category: <b>${currentIdx + 1} / ${allCategories.length}</b></span>
+      `;
+    }
+
+    function renderCategoryTitle(cat, pageNum) {
+      const title = createEl("div", "category-title");
+      title.innerHTML = `<span>${cat.name_raw}</span><small>Page ${pageNum}</small>`;
+      return title;
+    }
+
+    function renderSubcategoryTitle(text) {
+      const el = createEl("div", "subcategory-title");
+      el.textContent = text;
+      return el;
+    }
+
+    function render() {
+      dom.container.innerHTML = "";
+
+      const wrap = allCategories[currentIdx];
+      const cat = wrap.catRef;
+
+      renderMeta();
+      dom.container.appendChild(renderCategoryTitle(cat, wrap.page_num));
+
+      // Category items
+      if (cat.items_addons?.length > 0) {
+        cat.items_addons.forEach((item, itemIdx) => {
+          dom.container.appendChild(renderItem(item, itemIdx));
+        });
+      }
+
+      // Subcategory items
+      if (cat.subcategory_items?.length > 0) {
+        cat.subcategory_items.forEach((sub) => {
+          dom.container.appendChild(renderSubcategoryTitle(sub.name_raw));
+
+          sub.items_addons.forEach((item, itemIdx) => {
+            dom.container.appendChild(renderItem(item, itemIdx));
+          });
+        });
+      }
+
+      dom.prevBtn.style.visibility = currentIdx === 0 ? "hidden" : "visible";
+
+      if (currentIdx === allCategories.length - 1) {
+        dom.nextBtn.textContent = "✅ Save & Download JSON";
+        dom.nextBtn.onclick = actions.downloadJSON;
+      } else {
+        dom.nextBtn.textContent = "Next Category";
+        dom.nextBtn.onclick = actions.nextCategory;
+      }
+
+      lucide.createIcons();
+    }
+
+    function renderItem(item, itemIdx) {
+      ensureDefault(item.addons);
+
+      const card = createEl("div", "item-card");
+
+      const head = createEl("div", "item-head");
+      head.innerHTML = `
+        <b>${item.name_raw || "Item"}</b>
+        <i data-lucide="chevron-down"></i>
+      `;
+
+      const body = createEl("div", "item-body");
+      const addonHolder = createEl("div");
+      addonHolder.className = "addon-holder";
+
+      const addBtn = createEl("button", "btn-add-small");
+      addBtn.textContent = "+ Add Addon";
+
+      head.onclick = () => {
+        body.style.display = body.style.display === "block" ? "none" : "block";
+      };
+
+      item.addons.forEach((addon, addonIdx) => {
+        addonHolder.appendChild(renderAddonRow(item, itemIdx, addonIdx));
+      });
+
+      addBtn.onclick = () => actions.addAddon(item);
+
+      body.appendChild(addonHolder);
+      body.appendChild(addBtn);
+
+      card.appendChild(head);
+      card.appendChild(body);
+
+      return card;
+    }
+
+    function renderAddonRow(item, itemIdx, addonIdx) {
+      const row = createEl("div", "addon-row");
+      const addon = item.addons[addonIdx];
+
+      const amount = addon.price?.amount ?? 1;
+      const currency = addon.price?.currency ?? "USD";
+      const radioGroupName = `default-item-${currentIdx}-${itemIdx}`;
+
+      // Name input
+      const nameInput = createEl("input");
+      nameInput.value = addon.name_raw || "";
+      nameInput.onfocus = () => row.classList.add("editing");
+      nameInput.onblur = () => row.classList.remove("editing");
+      nameInput.oninput = (e) => actions.updateAddonName(item, addonIdx, e.target.value);
+
+      // Price input
+      const priceInput = createEl("input");
+      priceInput.value = amount;
+      priceInput.onfocus = () => row.classList.add("editing");
+      priceInput.onblur = () => row.classList.remove("editing");
+      priceInput.oninput = (e) => actions.updateAddonPrice(item, addonIdx, e.target.value, currency);
+
+      // Currency select
+      const currencySelect = createEl("select");
+      currencySelect.innerHTML = currencyOptions(currency);
+      currencySelect.onchange = (e) => actions.updateAddonCurrency(item, addonIdx, e.target.value);
+
+      // Default radio
+      const checkboxWrap = createEl("div", "checkbox-wrap");
+      const radio = createEl("input");
+      radio.type = "radio";
+      radio.name = radioGroupName;
+      radio.checked = !!addon.default;
+      radio.onchange = () => actions.setDefaultAddon(item, addonIdx);
+
+      checkboxWrap.appendChild(radio);
+      checkboxWrap.append(" Default");
+
+      // Actions
+      const actionWrap = createEl("div");
+      actionWrap.style.display = "flex";
+      actionWrap.style.gap = "8px";
+      actionWrap.style.justifyContent = "flex-end";
+
+      const editBtn = createEl("button", "action-btn");
+      editBtn.innerHTML = `<i data-lucide="pen-line"></i>`;
+      editBtn.onclick = () => nameInput.focus();
+
+      const deleteBtn = createEl("button", "action-btn");
+      deleteBtn.innerHTML = `<i data-lucide="trash-2"></i>`;
+      deleteBtn.onclick = () => actions.removeAddon(item, addonIdx);
+
+      actionWrap.appendChild(editBtn);
+      actionWrap.appendChild(deleteBtn);
+
+      row.appendChild(nameInput);
+      row.appendChild(priceInput);
+      row.appendChild(currencySelect);
+      row.appendChild(checkboxWrap);
+      row.appendChild(actionWrap);
+
+      return row;
+    }
+
+    /**
+     * ============================================
+     * Actions
+     * ============================================
+     */
+    const actions = {
+      nextCategory() {
+        setIndex(currentIdx + 1);
+        render();
+        window.scrollTo(0, 0);
+      },
+
+      addAddon(item) {
+        item.addons.push({
+          name_raw: "New Addon",
+          default: false,
+          price: { amount: 1, currency: "USD" },
+          price_by_variation: [],
+        });
+
+        ensureDefault(item.addons);
+        save();
+        render();
+      },
+
+      removeAddon(item, addonIdx) {
+        item.addons.splice(addonIdx, 1);
+        ensureDefault(item.addons);
+        save();
+        render();
+      },
+
+      updateAddonName(item, addonIdx, value) {
+        item.addons[addonIdx].name_raw = value;
+        save();
+      },
+
+      updateAddonPrice(item, addonIdx, value, currency) {
+        item.addons[addonIdx].price = {
+          amount: parseFloat(value) || 1,
+          currency,
+        };
+        save();
+      },
+
+      updateAddonCurrency(item, addonIdx, currency) {
+        if (!item.addons[addonIdx].price) item.addons[addonIdx].price = { amount: 1, currency };
+        item.addons[addonIdx].price.currency = currency;
+        save();
+      },
+
+      setDefaultAddon(item, addonIdx) {
+        item.addons.forEach((a) => (a.default = false));
+        item.addons[addonIdx].default = true;
+        save();
+        render();
+      },
+
+      downloadJSON() {
+        save();
+        localStorage.removeItem("final_idx");
+
+        const blob = new Blob([JSON.stringify(phase4Data, null, 2)], {
+          type: "application/json",
+        });
+
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${phase4Data.restaurant_name}_final_addons.json`;
+        a.click();
+
+        URL.revokeObjectURL(url);
+        alert("✅ JSON saved & downloaded!");
+      },
+    };
+
+    /**
+     * ============================================
+     * Events
+     * ============================================
+     */
+    dom.prevBtn.onclick = () => {
+      if (currentIdx > 0) {
+        setIndex(currentIdx - 1);
+        render();
+        window.scrollTo(0, 0);
+      }
+    };
+
+    /**
+     * ============================================
+     * Init
+     * ============================================
+     */
+    render();
+  </script>
+</body>
+</html>
